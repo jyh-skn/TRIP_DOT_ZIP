@@ -6,6 +6,8 @@ from constants import POPUP_TEMPLATE, TOOLTIP_TEMPLATE, MARKER_ICON_TEMPLATE
 from folium import plugins
 
 @dataclass
+# TODO: 지금은 아직 어떤 변수를 가지고와서 placeInfo로 만들지도 정의하지 않았는데 BaseModel로 넣으면 에러가 발생해서,
+# @dataclass로 선언해서 썼다가 어느 정도 정리가 되면 다시 BaseModel로 변경 후 엄격하게 적용 예정.
 class PlaceInfo():
     # 장소 정보
     place_id: str                       # ID
@@ -17,8 +19,9 @@ class PlaceInfo():
     # 예를 들어, 별점이나 카테고리 등등
     # LLM에 보낼 schema와 구분되는 다른 값.
     category: str | None = "카테고리 정보가 없습니다."  # 카테고리
+    
     # 이미지 컨트롤 icon이나 popup 제어 시 
-    icon: str = 'default'               # icon -> 커스텀?
+    icon: str = 'default'               # 커스텀을 위한 icon 무언가
 
     # 동작 컨트롤
     is_confirmed: bool = False          # 확정되었는지 여부
