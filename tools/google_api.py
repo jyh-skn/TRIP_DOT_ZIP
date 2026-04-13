@@ -1,5 +1,7 @@
+import streamlit as st
 from pydantic import BaseModel, Field
 from langchain.tools import tool
+from typing import List
 import os
 import requests
 from dotenv import load_dotenv
@@ -18,19 +20,20 @@ class PlaceSearchInfo(BaseModel):
     """
     # LLM 확인을 위한 Field
     destination: str = Field(description="검색할 도시 또는 지역명(예: 부산, 서울, 타이페이)")
-    styles: list[str] = Field(default=[], description="여행 스타일 목록(예: 카페, 명소, 관광지 등)")
-    constraints: list[str] = Field(default=[], description="특별한 제약사항(예: 채식, 반려동물, 비, 우천)")
+    styles: List[str] = Field(default=[], description="여행 스타일 목록(예: 카페, 명소, 관광지 등)")
+    constraints: List[str] = Field(default=[], description="특별한 제약사항(예: 채식, 반려동물, 비, 우천)")
     limit: int = Field(default=10, description="추천받을 장소의 최대 개수")
 
 # search_place tool
+@st.cache_data(ttl=3600)
 @tool("place_search", args_schema=PlaceSearchInfo)
-def search_place_tool(destination: str, styles: list[str], constraints: list[str], limit: int = 5) -> dict[str, any]:
+def search_place_tool(destination: str, styles: List[str], constraints: List[str], limit: int = 5) -> dict[str, any]:
     """
         Google Places API (New)사용 특정 지역(destination)의 장소 데이터 검색
 
         destination (str):
-        styles (list[str])
-        constraints (list[str])
+        styles (List[str])
+        constraints (List[str])
         limit (int)
     """
     api_key = os.getenv("GOOGLE_PLACE_API_KEY")
@@ -56,14 +59,16 @@ def search_place_tool(destination: str, styles: list[str], constraints: list[str
 
     try:
         # TODO: API 호출 공통부로 구분 예정.
+        # 특히 만약에 오류가 발생하거나, 정보가 부족한 경우 LLM이 지속적으로 호출해야할 수 있기 때문에 session 관리를 하는 util 함수 필요.
         response = requests.post(url, json=payload, headers=headers)
         print("response", response.text)
         response.raise_for_status()
         results = response.json().get("places", [])
         
-        results = []    # placeNotFoundError 테스트
+        # results = []    # placeNotFoundError 테스트
 
         mapped_places = []
+        # 결과값이 있을 때
         if len(results) > 0:
             for p in results:
                 types = p.get("types", [])
@@ -73,10 +78,10 @@ def search_place_tool(destination: str, styles: list[str], constraints: list[str
                 temp_place_info = {
                     "place_id": p.get("id"),
                     "name": p.get("displayName", {}).get("text"),
-                    # TODO: types의 종류가 많아서, 간단하게 변경할 함수 생성
-                    "category": types[0] if types else "N/A",
                     "lat": p.get("location", {}).get("latitude"),
                     "lng": p.get("location", {}).get("longitude"),
+                    # TODO: types의 종류가 많아서, 간단하게 변경할 함수 생성
+                    "category": types[0] if types else "N/A",
                     "summary": p.get("editorialSummary", {}).get("text", "정보 없음"),
                     "rating": p.get("rating", {}),
                     "indoor_outdoor": "indoor" if is_indoor else "outdoor",
@@ -93,6 +98,7 @@ def search_place_tool(destination: str, styles: list[str], constraints: list[str
                 "error": None,
                 "meta": {"tool_name": "place_search", "total_found": len(mapped_places)}
             }
+        # 결과값이 없는 경우 Exception으로 공통된 return 메시지
         else: 
             raise PlaceNotFoundError(
                 "place_search_tool"
@@ -102,7 +108,7 @@ def search_place_tool(destination: str, styles: list[str], constraints: list[str
         # 정해진 error message 호출
         return e.error_response()
 
-    except Exception as e:
+    except Exception as e: # 어.. 이것도 다 customException을 만들어야 하나..?
         return {
             "status": "error",
             "data": None,
@@ -132,5 +138,5 @@ if __name__ == "__main__":
     })
 
     # 결과 확인
-    import json
-    print(json.dumps(result, indent=4, ensure_ascii=False))
+    # import json
+    # print(json.dumps(result, indent=4, ensure_ascii=False))
