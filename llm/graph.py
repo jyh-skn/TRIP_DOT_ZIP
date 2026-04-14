@@ -6,6 +6,9 @@ from mock_tools.weather_tools import get_weather
 from mock_tools.place_tools import search_places
 from mock_tools.schedule_tools import build_schedule
 
+from openai import OpenAI
+from config import Settings
+
 
 def build_trip_agent():
     llm = ChatOpenAI(
@@ -25,3 +28,7 @@ def build_trip_agent():
         system_prompt=SYSTEM_PROMPT,
     )
     return agent
+
+def get_openai_clients(settings: Settings | None = None) -> OpenAI:
+    s = settings or Settings()
+    return OpenAI(api_key=s.openai_api_key)
