@@ -38,26 +38,48 @@ TOOLS = [
     },
     {
         "type": "function",
-        "name": "build_day_schedule",
-        "description": "장소 목록과 조건을 바탕으로 하루 여행 일정을 생성한다.",
+        "name": "create_schedule",
+        "description": "사용자가 선택하거나 추천된 장소들을 바탕으로 최적의 동선과 체류 시간을 계산하여 하루치 타임라인 일정을 생성합니다.",
         "parameters": {
             "type": "object",
             "properties": {
-                "date": {"type": "string"},
-                "region": {"type": "string"},
-                "start_time": {"type": "string"},
-                "end_time": {"type": "string"},
-                "budget_krw": {"type": "integer"},
                 "places": {
                     "type": "array",
-                    "items": {"type": "object"}
+                    "description": "방문할 장소들의 리스트. 첫 번째 요소는 여행의 시작점(예: 숙소)으로 간주합니다.",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "name": {"type": "string", "description": "장소 이름"},
+                            "lat": {"type": "number", "description": "위도"},
+                            "lng": {"type": "number", "description": "경도"},
+                            "types": {
+                                "type": "array",
+                                "items": {"type": "string"},
+                                "description": "구글 Places API 기준 장소 유형 리스트 (예: ['museum', 'park'])"
+                            }
+                        },
+                        "required": ["name", "lat", "lng", "types"],
+                        "additionalProperties": False
+                    }
                 },
-                "weather_summary": {"type": "string"}
+                "start_time_str": {
+                    "type": "string",
+                    "description": "일정 시작 시각 (HH:MM 형식). 기본값 '09:00'",
+                    "default": "09:00"
+                },
+                "mode": {
+                    "type": "string",
+                    "description": "이동 수단 설정",
+                    "enum": ["transit", "walking", "driving"],
+                    "default": "transit"
+                },
+                "optimize_route": {
+                    "type": "boolean",
+                    "description": "True이면 최적 동선으로 재배치하고, False이면 입력된 장소 순서를 유지합니다.",
+                    "default": True
+                }
             },
-            "required": [
-                "date", "region", "start_time", "end_time",
-                "budget_krw", "places", "weather_summary"
-            ],
+            "required": ["places"],
             "additionalProperties": False
         },
         "strict": True

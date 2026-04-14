@@ -14,32 +14,6 @@ api_key = os.getenv("GOOGLE_PLACE_API_KEY")
 # 구글 맵 클라이언트 설정 (발급받은 API 키 입력)
 gmaps = googlemaps.Client(key=api_key)
 
-# 1. Function Calling Schema
-{
-  "name": "create_schedule",
-  "description": "사용자가 선택하거나 AI가 추천한 장소들을 바탕으로 하루치 시간대별 일정을 생성합니다.",
-  "parameters": {
-    "type": "object",
-    "properties": {
-      "places": {
-        "type": "array",
-        "description": "방문할 장소들의 리스트",
-        "items": {
-          "type": "object",
-          "properties": {
-            "name": { "type": "string", "description": "장소 이름" },
-            "lat": { "type": "number", "description": "위도" },
-            "lng": { "type": "number", "description": "경도" },
-            "category": { "type": "string", "description": "장소 유형 (예: restaurant, museum, cafe)" }
-          },
-          "required": ["name", "lat", "lng"]
-        }
-      }
-    },
-    "required": ["places"]
-  }
-}
-
 # 2. STAY_TIME_CONFIG
 # Google Places API Table A & B 기반 평균 체류 시간 설정 ★ Placesearch
 STAY_TIME_CONFIG = {
