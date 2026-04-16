@@ -17,26 +17,14 @@ from dotenv import load_dotenv
 
 ROOT_DIR = Path(__file__).resolve().parents[1]
 
-from mock_tools.place_tools import search_places
-from mock_tools.schedule_tools import build_schedule
-from mock_tools.weather_tools import get_weather
-
-from middlewares.executor import AgentExecutor
-from middlewares.registry import ToolRegistry
+from agent_builder import agent
 from llm.prompts import SYSTEM_PROMPT
 from proto.utils import parse_buttons
+from llm.tools import get_weather_tool, search_place_tool, make_schedule_tool
 load_dotenv(ROOT_DIR / ".env")
 
 GUIDE_MOUSE_IMAGE = ROOT_DIR / "assets" / "tripdotzip_guide_mouse.png"
 MOUSE_ICON_IMAGE = ROOT_DIR / "assets" / "tripdotzip_mouse_icon.png"
-
-tool_registry = ToolRegistry()
-tool_registry.register("get_weather", get_weather)
-tool_registry.register("search_places", search_places)
-tool_registry.register("build_schedule", build_schedule)
-
-executor = AgentExecutor(registry=tool_registry)
-
 
 st.set_page_config(
     page_title="트립닷집",
@@ -169,19 +157,37 @@ def get_mock_preview() -> dict:
     trip_date = info["date"] if info["date"] != "미정" else "2026-05-14"
     style = info["style"] if info["style"] != "미정" else "휴식형"
 
-    weather = invoke_tool(get_weather, {"destination": destination, "date": trip_date})
-    places = invoke_tool(search_places, {"region": destination, "theme": style})
+    weather = invoke_tool(
+        get_weather_tool,
+        {
+            "city_name": destination,
+            "travel_date": trip_date,
+        },
+    )
+
+    # search_place_tool의 실제 입력 스키마에 맞게 수정 필요
+    places = invoke_tool(
+        search_place_tool,
+        {
+            "query": f"{destination} {style} 여행지 추천"
+        },
+    )
 
     place_items = []
     if places.get("status") == "success":
-        place_items = places.get("data", {}).get("places", [])
+        data = places.get("data", {})
+        if isinstance(data, dict):
+            place_items = data.get("places", data.get("results", []))
+        elif isinstance(data, list):
+            place_items = data
 
     schedule = invoke_tool(
-        build_schedule,
+        make_schedule_tool,
         {
-            "start_time": "10:00",
-            "end_time": "18:00",
             "places": place_items,
+            "start_time": "10:00",
+            "mode": "transit",
+            "optimize_route": True,
         },
     )
 
@@ -333,22 +339,20 @@ def render_intro() -> None:
 
 
 def initialize_greeting() -> None:
-    st.write("DEBUG: initialize_greeting 진입")
-    print("DEBUG: initialize_greeting 진입")
-    print("DEBUG: executor =", executor)
-
     if st.session_state.initialized:
         return
 
     try:
         with st.spinner("트립닷집이 준비 중이에요..."):
-            init_payload = [
-                {"role": "system", "content": SYSTEM_PROMPT},
-                {"role": "user", "content": "안녕하세요! 여행 추천을 받고 싶어요."},
-            ]
-            print("DEBUG: executor.run 직전")
-            greeting_raw = executor.run(init_payload)
-            print("DEBUG: executor.run 직후", greeting_raw)
+            response = agent.invoke({
+                "messages": [
+                    ("system", SYSTEM_PROMPT),
+                    ("user", "안녕하세요! 여행 추천을 받고 싶어요.")
+                ]
+            })
+
+            greeting_raw = response["messages"][-1].content
+            print("DEBUG: lang graph 직후", greeting_raw)
 
     except Exception as exc:
         print("DEBUG: initialize_greeting 예외 =", exc)
@@ -388,7 +392,14 @@ def process_user_input(user_text: str) -> None:
         with loading_slot.container():
             render_loading_message()
         with st.spinner(""):
-            raw_reply = executor.run(api_payload)
+            response = agent.invoke({
+                "messages": [
+                    ("system", SYSTEM_PROMPT),
+                    *[(m["role"], m["content"]) for m in st.session_state.messages]
+                ]
+            })
+
+            raw_reply = response["messages"][-1].content
             print("DEBUG: executor.run 직후", raw_reply)
     except Exception as exc:
         print("DEBUG: process_user_input 예외 =", exc)

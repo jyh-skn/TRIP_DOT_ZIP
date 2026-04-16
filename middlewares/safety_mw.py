@@ -69,6 +69,7 @@ def should_block(client: OpenAI, text: str) -> bool:
     print("🔍 moderation categories:", mod["categories"])
     print("🔍 moderation scores:", mod["scores"])
 
+
     return should_block_by_score(mod["scores"])
 
 

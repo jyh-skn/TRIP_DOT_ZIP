@@ -102,7 +102,7 @@ def count_text_chars(messages: list[dict]) -> int:
 
 def conversation_summary_middleware(
     openai_client: OpenAI,
-    trigger_char_count: int = 300,
+    trigger_char_count: int = 1000,
     keep_last_n: int = 4,
 ):
     def middleware(request: LLMRequest, next_) -> LLMResponse:
