@@ -98,7 +98,7 @@ def map_tool(
     """
     try:
         if not places:
-            raise MapRenderError("map_render", reason="장소 목록이 비어 있습니다.")
+            raise MapRenderError("장소 목록이 비어 있습니다.", tool_name="map_tool")
 
         # 중심 좌표 결정
         c_lat, c_lng = (

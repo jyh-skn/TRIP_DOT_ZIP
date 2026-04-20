@@ -46,3 +46,11 @@ class RouteNotFoundError(CommonCustomError):
             message=message,
             tool_name=tool_name
         )
+
+class MapRenderError(CommonCustomError):
+    def __init__(self, message: str, tool_name: str = "map_tool"):
+        super().__init__(
+            code = "MAP_RENDER_ERROR",
+            message = message,
+            tool_name = tool_name
+        )
