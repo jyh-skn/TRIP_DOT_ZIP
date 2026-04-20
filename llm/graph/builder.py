@@ -1,7 +1,8 @@
 from langgraph.graph import StateGraph, END
 from llm.graph.state import TravelAgentState
 from llm.graph.routes import should_continue
-from llm.nodes.nodes_mock import route_intent_node
+from llm.nodes.intent_nodes import route_intent_node
+from llm.nodes.response_node import build_response_node
 from llm.graph.contracts import StateKeys # 규약 임포트
 
 # 1. 그래프 초기화
@@ -9,6 +10,7 @@ workflow = StateGraph(TravelAgentState)
 
 # 2. 노드 등록
 workflow.add_node("intent_router", route_intent_node)
+workflow.add_node("response_node", build_response_node) # 최종 답변 노드
 # 나머지 노드들은 담당자들이 완성하는 대로 추가 예정 -> 임의로 place_node 추가
 
 # 3. 흐름 연결
@@ -22,7 +24,7 @@ workflow.add_conditional_edges(
         "weather_node": "weather_node",
         "place_node": "place_node",             # 장소 검색이 필요하면 여기로
         "scheduler_node": "scheduler_node",     # 이미 장소가 충분하면 바로 여기로
-        "final_answer_node": END                # 일단 끝내거나 답변 노드로 연결
+        "response_node": "response_node"        # 일반 대화는 바로 답변으로!
     }
 )
 
