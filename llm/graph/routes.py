@@ -47,3 +47,12 @@ def route_after_missing_check(state: TravelAgentState):
         return "ask_user_node"
 
     return should_continue(state)
+
+
+def route_after_safety_check(state: TravelAgentState):
+    """
+    safety 검사 후 차단 여부에 따라 분기
+    """
+    if state.get(StateKeys.BLOCKED, False):
+        return "blocked_response_node"
+    return "intent_router"

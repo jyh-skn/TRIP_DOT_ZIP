@@ -32,3 +32,7 @@ class StateKeys:
     NEED_WEATHER = "need_weather"           # 날씨 조회 필요 여부
     START_TIME = "start_time"               # 일정 시작 시간
     MISSING_SLOTS = "missing_slots"         # 아직 비어 있는 필수 정보 목록
+
+    # 대화 차단 확인용
+    BLOCKED = "blocked"
+    BLOCK_REASON = "block_reason"

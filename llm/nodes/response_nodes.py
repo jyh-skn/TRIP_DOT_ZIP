@@ -71,3 +71,14 @@ def build_response_node(state: TravelAgentState) -> dict:
 
     # 3. 결과 반환 (final_response 업데이트)
     return {StateKeys.FINAL_RESPONSE: response_text}
+
+
+# middleware에 의한 대화 차단 시
+def blocked_response_node(state: TravelAgentState) -> dict:
+    """
+    이번 턴만 차단하고, 대화는 계속 가능하도록 안내 메시지 반환
+    """
+    reason = state.get(StateKeys.BLOCK_REASON, "이번 요청은 처리할 수 없습니다.")
+    return {
+        StateKeys.FINAL_RESPONSE: reason
+    }

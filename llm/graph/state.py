@@ -64,3 +64,7 @@ class TravelAgentState(TypedDict, total=False):     # 처음부터 모든 값이
     
     # 6. 검증여부
     quality_check: QualityCheck
+
+    # 7. 대화 차단 여부
+    blocked: bool
+    blocked_reason: str
