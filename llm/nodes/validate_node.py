@@ -27,7 +27,13 @@ VALIDATION_PROMPT = """
     아래 사용자의 요구사항과 추천 장소 리스트를 비교하여 엄격하게 품질을 평가해줘.
     1. 사용자의 요구사항 '{styles}'과 추천 장소가 얼마나 일치하는지 평가
     2. 제약 조건: '{constraints}'이 일정에 잘 반영되었는지 평가
-    3. 논리적 타당성: 추천장소 리스트의 장소들이'{raw_places}'가 실제로 여행 경로 상 실제로 방문이 가능한 곳인지.
+    3. 논리적 타당성: 추천장소 리스트의 장소들이'{raw_places}'가 실제로 여행 경로 상 실제로 방문이 가능한 곳인지.    # 이 부분을
+    3. ★시간 타당성: 각 장소의 'arrival'과 'departure' 사이의 간격이 충분한가? (식사 1시간, 관람 1.5~2시간 등)    # 3번과            ★
+    4. ★동선 효율성: 장소 간 이동 시간이 현실적인가? 너무 멀리 떨어진 곳을 무리하게 배치하지 않았는가?              # 4번으로 바꾸면 어떨까요
+
+    검증 결과:                                                                                                # 여기서부터
+    - 동선이나 시간 배분이 문제라면 target_node를 "scheduler_node"로 지정하세요.
+    - 장소 자체가 취향에 안 맞으면 target_node를 "place_node"로 지정하세요.                                      # 여기까지도 추가    ★
 
     만약 하나라도 부적합하다면 is_passed = False로 하고, issues에는 구체적으로 어떤 점이 문제인지 작성해줘.
     target_node는 문제가 발견된 경우 돌아가야 할 노드 이름을 작성해줘. (예: "PlaceSearchNode", "MakeScheduleNode")
@@ -67,6 +73,40 @@ def validate_travel_plan_node(state: TempTravelAgentState) -> dict:
                 "target_node": "search_places"
             },
             "state_type_cd": "02" # 다시 검색 단계로 보내거나 에러 페이지로 유도
+        }
+
+# 스케쥴 부른 이후에 검증하려면 itinerary를 불러오는게 어떨까 싶습니다. 아래 수정된 함수 확인 부탁드립니다.
+def validate_travel_plan_node(state: dict) -> dict: # 기존 TempTravelAgentState 대신 dict/TravelAgentState 호환
+    try:
+        # [수정] 기존 raw_places 대신 실제 시간표인 itinerary를 우선 참조하도록 변경
+        itinerary = state.get("itinerary", [])
+        styles = state.get("styles", [])
+        constraints = state.get("constraints", [])
+
+        # LLM에게 전달할 텍스트 구성
+        prompt = ChatPromptTemplate.from_template(VALIDATION_PROMPT)
+        
+        # 모델 연결 (기존 구조 유지)
+        structured_output = llm.with_structured_output(QualityCheckResult)
+        chain = prompt | structured_output
+        
+        # [수정] builder.py의 state 구조에 맞춰 데이터 전달
+        result = chain.invoke({
+            "itinerary": itinerary,
+            "styles": styles,
+            "constraints": constraints
+        })
+
+        return {"quality_check": result.model_dump()}
+        
+    except Exception as e:
+        print(f"Error in Validator: {e}")
+        return {
+            "quality_check": {
+                "is_passed": False, 
+                "issues": ["검증 과정에서 오류가 발생했습니다."],
+                "target_node": "place_node"
+            }
         }
 
 # 검증 후의 분기 로직
