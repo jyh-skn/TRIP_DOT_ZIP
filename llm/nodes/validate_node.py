@@ -68,6 +68,20 @@ def validate_travel_plan_node(state: TempTravelAgentState) -> dict:
             },
             "state_type_cd": "02" # 다시 검색 단계로 보내거나 에러 페이지로 유도
         }
+
+# 검증 후의 분기 로직
+def route_after_validation(state: TravelAgentState):
+    quality_check = state.get("quality_check")
+    
+    # 검증 통과 못 했을 때
+    if quality_check and not quality_check.get("is_passed", True):
+        target = quality_check.get("target_node")
+        # validate_node.py에서 정의한 target_node로 유연하게 보냄
+        # (예: 장소가 별로면 "place_node", 동선이 꼬였으면 "scheduler_node")
+        return target if target in ["place_node", "scheduler_node"] else "place_node"
+    
+    # 통과하면 최종 답변 노드로
+    return "response_node"
     
 # 테스트 케이스 실행
 if __name__ == "__main__":
