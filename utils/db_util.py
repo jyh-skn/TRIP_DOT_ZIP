@@ -18,7 +18,7 @@ import re
 from utils.custom_exception import PlaceNotFoundError
 from config import Settings
 import json
-from constants import PLACE_CATEGORY_MAP
+from constants import PLACE_CATEGORY_MAP, INDOOR_TYPES
 
 # 벡터 DB 적재 import
 from langchain_openai import OpenAIEmbeddings
@@ -28,7 +28,7 @@ import hashlib
 import chromadb
 
 # 전처리 완료된 청크를 저장 여부.
-SAVE_FILE_TEST_MODE = False
+SAVE_FILE_TEST_MODE = True
 
 KEYWORD_DICT = {
     "청결": ["깔끔", "청결", "위생", "냄새", "깨끗"],
@@ -43,7 +43,7 @@ KEYWORD_DICT = {
 NOISE_PATTERNS = [
     r"https?://\S+",          # URL 제거
     r"[ㅋㅎㅠㅜ]{2,}",         # 반복 자모 축약 (ㅋㅋ → 공백)
-    r"[~!@#$%^&*]{2,}",       # 반복 특수문자 정리
+    r"[~!@#$%^&*.]{2,}",      # 반복 특수문자 정리
     r"\s{2,}",                # 다중 공백 → 단일 공백
 ]
 
@@ -69,7 +69,7 @@ class PlaceReviewChunkInfo:
     place_lng: float
     place_category: str
     place_rating: float
-    place_type: str     # indoor/outdoor
+    place_type: str         # indoor/outdoor
 
     review_rating: int
     review_author: str
@@ -175,14 +175,14 @@ def clean_text(text: str) -> str:
     text = text.replace("\n", " ").strip()
     return text
 
-def build_embedding_text(place_name: str, place_type: str, review_text: str) -> str:
+def build_embedding_text(place_name: str, place_category: str, review_text: str) -> str:
     """
     임베딩 텍스트 구성 전략: [장소 컨텍스트] + [리뷰 본문]
     → 검색 시 "동물원 청결 관련 리뷰 찾기" 같은 쿼리와 매칭 품질 향상
 
     TODO: 이부분은 품질테스트 필요.
     """
-    return f"[{place_type}] {place_name} 리뷰: {review_text}"
+    return f"[{place_category}] {place_name} 리뷰: {review_text}"
 
 def parse_place_data(raw_data: dict) -> List[PlaceReviewChunkInfo]:
     """
@@ -195,7 +195,8 @@ def parse_place_data(raw_data: dict) -> List[PlaceReviewChunkInfo]:
     for place in raw_data: 
         place_id   = place["id"]
         place_name = place["displayName"]["text"]
-        place_type = next((k for k, cats in PLACE_CATEGORY_MAP.items() if place["primaryType"] in cats), "default")
+        place_category = next((k for k, cats in PLACE_CATEGORY_MAP.items() if place["primaryType"] in cats), "default")
+        place_type = "indoor" if place["primaryType"] in INDOOR_TYPES else "outdoor"
         place_rating = float(place.get("rating", 0))
         lat = place["location"]["latitude"]
         lng = place["location"]["longitude"]
@@ -217,9 +218,10 @@ def parse_place_data(raw_data: dict) -> List[PlaceReviewChunkInfo]:
                 chunk_id           = make_chunk_id(place_id, r_name),
                 place_id           = place_id,
                 review_name        = r_name,
-                text_for_embedding = build_embedding_text(place_name, place_type, cleaned),
+                text_for_embedding = build_embedding_text(place_name, place_category, cleaned),
                 raw_text           = raw_text,
                 place_name         = place_name,
+                place_category     = place_category,
                 place_type         = place_type,
                 place_rating       = place_rating,
                 place_lat          = lat,
@@ -252,7 +254,7 @@ def run_pipeline(
     # test_flag가 True인 경우, 전처리된 청크의 샘플을 출력하고 함수 종료
     if test_flag:
         print("\n[test_flag]] 전처리 결과 샘플:")
-        for c in chunks[:2]:
+        for c in chunks[:10]:
             print(f"\n  chunk_id     : {c.chunk_id}")
             print(f"  place_name   : {c.place_name}")
             print(f"  embedding_text: {c.text_for_embedding[:80]}...")
