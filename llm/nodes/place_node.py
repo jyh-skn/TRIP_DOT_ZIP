@@ -65,13 +65,15 @@ def get_places_by_api(destination:str, search_task:List[dict]):
             if response.status_code == 200:
                 data = response.json().get("places", []) 
                 result_places.append(data)
+
+                # print(f'DEBUG R: {len(result_places)}')
             else:
                 print(f"API ERROR: {response.status_code} | {response.text}")
             
 
         return {
             "status_code": 200,
-            "json_data": {"places": result_places}
+            "json_data": {"places": result_places[0]}
         }
 
         # print(result_list)
@@ -108,6 +110,7 @@ def place_node(state: TravelAgentState):
     # api_result가 성공일 경우
     if api_result["status_code"] == 200:
     
+        #print(f'DEBUG: type{api_result["json_data"]["places"][:1]}')
         result_chunk = run_pipeline(
             raw_data=api_result["json_data"]["places"], 
             chroma_dir=Settings.CHROMA_PERSIST_DIR, 
