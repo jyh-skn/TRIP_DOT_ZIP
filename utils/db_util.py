@@ -261,7 +261,7 @@ def run_pipeline(
         test_flag: bool=False
     ) -> List[PlaceReviewChunkInfo]:
     
-    print(f'DEBUG: {raw_data}')
+    # print(f'[DEBUG(DB_UTIL-run_pipeline)]: {raw_data}')
     # test_flag 적재 없이 전처리만 확인 가능한 파일 생성.
 
     # 1. 파싱 및 전처리
