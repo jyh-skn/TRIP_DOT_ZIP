@@ -73,6 +73,24 @@ def extract_message_text(content) -> str:
     return str(content)
 
 
+def get_mock_preview() -> dict:
+    """
+    UI 하위 호환용 프리뷰 응답 형식을 반환한다.
+
+    최신 Streamlit UI는 사이드바 프리뷰 섹션에서 이 함수를 import한다.
+    현재 실제 노드 기반 프리뷰 집계는 아직 구현되지 않았으므로,
+    렌더링이 깨지지 않도록 빈 성공 응답 형태만 반환한다.
+
+    Returns:
+        dict: weather, places, schedule 키를 가진 기본 프리뷰 구조
+    """
+    return {
+        "weather": {"status": "success", "data": {}},
+        "places": {"status": "success", "data": {"places": []}},
+        "schedule": {"status": "success", "data": {"itinerary": []}},
+    }
+
+
 # def get_mock_preview() -> dict:
 #     """
 #     사이드바 미리보기용 mock 결과를 생성한다.

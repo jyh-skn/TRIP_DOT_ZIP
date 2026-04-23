@@ -96,10 +96,10 @@ def place_node(state: TravelAgentState) -> dict:
 
     # 만약 상태값 체크가 필요하면, 상태값 체크
     # 도착지
-    destination = state.get(StateKeys.DESTINATION)
+    destination = state.get(StateKeys.DESTINATION) or ""
 
     # 제약조건 
-    constraints = state.get(StateKeys.CONSTRAINTS)
+    constraints = state.get(StateKeys.CONSTRAINTS) or []
 
     temp_places = []
 

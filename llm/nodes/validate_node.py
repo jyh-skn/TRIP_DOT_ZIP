@@ -8,6 +8,7 @@ from langchain_core.prompts import ChatPromptTemplate
 from test_backup.langgraph_jyhong.state import TempTravelAgentState, QualityCheck # QualityCheck는 테스트용
 from pydantic import BaseModel, Field
 from typing import List
+from llm.graph.state import TravelAgentState
 
 
 # 검증용 LLM 설정
