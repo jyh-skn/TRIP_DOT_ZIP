@@ -157,6 +157,12 @@ def extract_trip_requirements_node(state: TravelAgentState) -> dict:
     last_msg = messages[-1]
     user_text = last_msg.content if hasattr(last_msg, "content") else last_msg.get("content", "")
 
+    # 1. 기존 State에 저장된 값 가져오기 [추가]
+    current_destination = state.get(StateKeys.DESTINATION)
+    current_styles = state.get(StateKeys.STYLES, [])
+    current_constraints = state.get(StateKeys.CONSTRAINTS, [])
+
+    # 2. 현재 메시지에서 새로운 정보 추출
     destination = _extract_destination(user_text)
     styles = _extract_styles(user_text)
     constraints = _extract_constraints(user_text)
@@ -165,12 +171,23 @@ def extract_trip_requirements_node(state: TravelAgentState) -> dict:
 
     updates = {}
 
+    # 신규 목적지가 없더라도 기존 목적지가 있다면 유지
     if destination:
         updates[StateKeys.DESTINATION] = destination
+    elif current_destination:
+        updates[StateKeys.DESTINATION] = current_destination
+
+    # 스타일과 제약사항도 기존 값과 합치거나 유지
     if styles:
-        updates[StateKeys.STYLES] = styles
+        updates[StateKeys.STYLES] = list(set(current_styles + styles))
+    elif current_styles:
+        updates[StateKeys.STYLES] = current_styles
     if constraints:
-        updates[StateKeys.CONSTRAINTS] = constraints
+        updates[StateKeys.CONSTRAINTS] = list(set(current_constraints + constraints))
+    elif current_constraints:
+        updates[StateKeys.CONSTRAINTS] = current_constraints
+
+    # 날짜 및 시간 정보 업데이트
     if date_info.get("travel_date"):
         updates[StateKeys.TRAVEL_DATE] = date_info.get("travel_date")
     if date_info.get("relative_days") is not None:
@@ -180,7 +197,8 @@ def extract_trip_requirements_node(state: TravelAgentState) -> dict:
     if start_time:
         updates[StateKeys.START_TIME] = start_time
 
-    print("[DEBUG] destination =", destination)
+    print(f"[DEBUG] Existing State: dest={current_destination}, styles={current_styles}")
+    print(f"[DEBUG] Newly Extracted: dest={destination}, styles={styles}")
     print("[DEBUG] styles =", styles)
     print("[DEBUG] constraints =", constraints)
     print("[DEBUG] start_time =", start_time)
