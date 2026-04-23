@@ -12,11 +12,14 @@ import requests
 from llm.graph.contracts import StateKeys
 from utils.db_util import run_pipeline
 from utils.custom_exception import CommonCustomError
+import json
 
 # API KEY
 PLACES_API_KEY = Settings.places_api_key
 # Google API 호출 데이터 최댓값
 API_LIMIT = 20 # API에서 최대 값이 20.
+# 파일 저장 모드
+SAVE_FILE_TEST_MODE = True
 
 # API 호출 함수
 def get_places_by_api(destination:str, constraints: List[str], search_task:List[dict]):
@@ -51,14 +54,14 @@ def get_places_by_api(destination:str, constraints: List[str], search_task:List[
             result_places = []
             
             for task in search_task:
-                print(f"DEBUG: {task}")
+                # print(f"DEBUG: {task}")
 
                 query = ' '.join([f"{destination} {s}" for s in task['styles']])
 
                 if len(constraints) > 0 :
                     query = query + ' ' + ' '.join(constraints)
 
-                print(f"DEBUG: {query}")
+                # print(f"DEBUG: {query}")
 
                 payload = {
                     "textQuery": query,
@@ -79,7 +82,17 @@ def get_places_by_api(destination:str, constraints: List[str], search_task:List[
                         "status_code": response.status_code,
                         "json_data": None
                     }
-
+                
+            print(f'[DEBUG(PLACE_NODE)]{SAVE_FILE_TEST_MODE = }')     
+            if SAVE_FILE_TEST_MODE:
+                
+                
+                # 저장할 파일명 설정
+                file_path = "./data/travel_itinerary.json"
+                # 데이터를 보기 위한 파일 다운로드 
+                with open(file_path, 'w', encoding='utf-8') as f:
+                    json.dump(result_places, f, indent=4, ensure_ascii=False)
+            print(f'[DEBUG(PLACE_NODE)]{len(result_places)}')     
             return {
                 "status_code": 200,
                 "json_data": {"places": result_places}
@@ -92,7 +105,7 @@ def get_places_by_api(destination:str, constraints: List[str], search_task:List[
         return e.error_response()
 
 def place_node(state: TravelAgentState) -> dict:
-    print(f'Debug: place_node {state}')
+    print(f'[DEBUG] PLACE NODE 진입 {state}')
 
     # 만약 상태값 체크가 필요하면, 상태값 체크
     # 도착지
