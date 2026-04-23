@@ -29,17 +29,18 @@ from streamlit_app.back.session_state import (
     reset_user_profile,
     save_profile_to_db,
 )
-from streamlit_app.back.chat_logic import get_mock_preview, process_user_input
+from streamlit_app.back.chat_logic import process_user_input
 
 # =========================
 # 경로 설정
 # =========================
-BASE_DIR = Path(__file__).resolve().parent.parent
-ROOT_DIR = Path(__file__).resolve().parents[1]
 
+ROOT_DIR = Path(__file__).resolve().parents[2]
 GUIDE_MOUSE_IMAGE = ROOT_DIR / "assets" / "tripdotzip_guide_mouse.png"
 MOUSE_ICON_IMAGE = ROOT_DIR / "assets" / "tripdotzip_mouse_icon.png"
 
+BASE_DIR = Path(__file__).resolve().parent.parent
+ROOT_DIR = Path(__file__).resolve().parents[1]
 
 def load_css() -> None:
     """
@@ -293,41 +294,6 @@ def render_history_item(title: str, day: str) -> None:
         unsafe_allow_html=True,
     )
 
-
-def render_mock_preview() -> None:
-    """
-    사이드바용 1차 추천 미리보기를 렌더링한다.
-
-    Returns:
-        None
-    """
-    preview = get_mock_preview()
-    weather_data = (
-        preview["weather"].get("data", {})
-        if preview["weather"].get("status") == "success"
-        else {}
-    )
-    schedule_data = (
-        preview["schedule"].get("data", {})
-        if preview["schedule"].get("status") == "success"
-        else {}
-    )
-    itinerary = schedule_data.get("itinerary", [])
-
-    st.markdown('<div class="side-title">1차 추천 미리보기</div>', unsafe_allow_html=True)
-    render_info_card("W", "날씨", str(weather_data.get("weather", "확인 예정")))
-
-    if itinerary:
-        first_item = itinerary[0]
-        render_info_card(
-            "T",
-            "첫 일정",
-            f"{first_item.get('time', '')} {first_item.get('place_name', '')}",
-        )
-    else:
-        render_info_card("T", "첫 일정", "조건 입력 후 생성")
-
-
 def render_left_panel() -> None:
     """
     Streamlit 사이드바 전체를 렌더링한다.
@@ -379,9 +345,6 @@ def render_left_panel() -> None:
         if st.button("프로필 다시 설정", use_container_width=True):
             reset_user_profile()
             st.rerun()
-
-    # 미리보기 영역
-    render_mock_preview()
 
     # 지난 여행 기록
     st.markdown('<div class="side-title">지난 여행 계획</div>', unsafe_allow_html=True)

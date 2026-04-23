@@ -142,110 +142,95 @@ def initialize_greeting() -> None:
     st.session_state.quick_buttons = greeting_buttons
     st.session_state.initialized = True
 
-def format_weather_from_state(state: dict) -> str:
-    """
-    날씨 tool 결과를 사용자 친화적인 텍스트로 변환한다.
+# def format_weather_from_state(state: dict) -> str:
+#     weather_data = state.get("weather_data", {}) or {}
+#
+#     if not weather_data:
+#         return "날씨 정보를 불러오지 못했어요."
+#
+#     display_city = weather_data.get("display_city_name", "여행지")
+#     resolved_date = weather_data.get("resolved_travel_date", "날짜 정보 없음")
+#
+#     weather_info = weather_data.get("weather", {})
+#     condition_info = weather_data.get("condition", {})
+#     ddatchwi_info = weather_data.get("ddatchwi", {})
+#
+#     weather_text = weather_info.get("description", "정보 없음")
+#     temp = weather_info.get("temperature", "정보 없음")
+#     feels_like = weather_info.get("temperature_feels_like", "정보 없음")
+#     humidity = weather_info.get("humidity", "정보 없음")
+#     wind_speed = weather_info.get("wind_speed", "정보 없음")
+#
+#     route_recommendation = condition_info.get("route_recommendation", "정보 없음")
+#     reason = condition_info.get("reason", "정보 없음")
+#
+#     ddatchwi_character = ddatchwi_info.get("character", "땃쥐가 생각 중이에요…")
+#     ddatchwi_text = ddatchwi_info.get("message", "참고 정보가 없어요.")
+#
+#     return (
+#         f"먼저 {display_city} 날씨부터 볼게요.\n"
+#         f"- 날짜: {resolved_date}\n"
+#         f"- 날씨: {weather_text}\n"
+#         f"- 기온: {temp}도\n"
+#         f"- 체감온도: {feels_like}도\n"
+#         f"- 습도: {humidity}%\n"
+#         f"- 바람: {wind_speed}m/s\n"
+#         f"- 추천 유형: {route_recommendation}\n"
+#         f"- 판단 이유: {reason}\n\n"
+#         f"{ddatchwi_character}\n"
+#         f"{ddatchwi_text}"
+#     )
 
-    Args:
-        tool_result (dict): 날씨 tool 실행 결과
-        fallback_city (str): 도시명 fallback 값
+# def format_schedule_from_state(state: dict) -> str:
+#     """
+#     LangGraph state의 itinerary를 사용자용 문자열로 변환한다.
+#
+#     Args:
+#         state (dict): LangGraph 상태값
+#
+#     Returns:
+#         str: 일정 안내 문자열
+#     """
+#     itinerary = state.get("itinerary", []) or []
+#
+#     if not itinerary:
+#         return "일정은 아직 만들지 못했어요."
+#
+#     lines = ["\n추천 일정은 이렇게 짜볼게요."]
+#     for idx, item in enumerate(itinerary[:5], start=1):
+#         time_text = item.get("time") or item.get("arrival") or ""
+#         place_name = item.get("place_name") or item.get("name") or f"{idx}번 장소"
+#
+#         if time_text:
+#             lines.append(f"- {time_text} {place_name}")
+#         else:
+#             lines.append(f"- {place_name}")
+#
+#     return "\n".join(lines)
 
-    Returns:
-        str: 날씨 안내 문자열
-    """
-    weather_data = state.get("weather_data", {}) or {}
-
-    if not weather_data:
-        return "날씨 정보를 불러오지 못했어요."
-
-    display_city = weather_data.get("display_city_name", "여행지")
-    resolved_date = weather_data.get("resolved_travel_date", "날짜 정보 없음")
-
-    weather_info = weather_data.get("weather", {})
-    condition_info = weather_data.get("condition", {})
-    ddatchwi_info = weather_data.get("ddatchwi", {})
-
-    weather_text = weather_info.get("description", "정보 없음")
-    temp = weather_info.get("temperature", "정보 없음")
-    feels_like = weather_info.get("temperature_feels_like", "정보 없음")
-    humidity = weather_info.get("humidity", "정보 없음")
-    wind_speed = weather_info.get("wind_speed", "정보 없음")
-
-    route_recommendation = condition_info.get("route_recommendation", "정보 없음")
-    reason = condition_info.get("reason", "정보 없음")
-
-    ddatchwi_character = ddatchwi_info.get("character", "땃쥐가 생각 중이에요…")
-    ddatchwi_text = ddatchwi_info.get("message", "참고 정보가 없어요.")
-
-    return (
-        f"먼저 {display_city} 날씨부터 볼게요.\n"
-        f"- 날짜: {resolved_date}\n"
-        f"- 날씨: {weather_text}\n"
-        f"- 기온: {temp}도\n"
-        f"- 체감온도: {feels_like}도\n"
-        f"- 습도: {humidity}%\n"
-        f"- 바람: {wind_speed}m/s\n"
-        f"- 추천 유형: {route_recommendation}\n"
-        f"- 판단 이유: {reason}\n\n"
-        f"{ddatchwi_character}\n"
-        f"{ddatchwi_text}"
-    )
-
-def format_schedule_from_state(state: dict) -> str:
-    """
-    LangGraph state의 itinerary를 사용자용 문자열로 변환한다.
-
-    Args:
-        state (dict): LangGraph 상태값
-
-    Returns:
-        str: 일정 안내 문자열
-    """
-    itinerary = state.get("itinerary", []) or []
-
-    if not itinerary:
-        return "일정은 아직 만들지 못했어요."
-
-    lines = ["\n추천 일정은 이렇게 짜볼게요."]
-    for idx, item in enumerate(itinerary[:5], start=1):
-        time_text = item.get("time") or item.get("arrival") or ""
-        place_name = item.get("place_name") or item.get("name") or f"{idx}번 장소"
-
-        if time_text:
-            lines.append(f"- {time_text} {place_name}")
-        else:
-            lines.append(f"- {place_name}")
-
-    return "\n".join(lines)
-
-
-def format_places_reply(places_result: dict) -> str:
-    """
-    장소 검색 결과를 사용자용 문자열로 변환한다.
-
-    Args:
-        places_result (dict): 장소 검색 결과
-
-    Returns:
-        str: 장소 추천 문자열
-    """
-    if not isinstance(places_result, dict) or places_result.get("status") != "success":
-        return "추천 장소는 아직 찾지 못했어요."
-
-    data = places_result.get("data", {}) or {}
-    places = data.get("places", [])
-
-    if not places:
-        return "추천할 장소가 아직 없어요."
-
-    lines = ["\n함께 볼 만한 장소도 골라봤어요."]
-    for place in places[:5]:
-        name = place.get("name", "이름 없는 장소")
-        category = place.get("category", "장소")
-        rating = place.get("rating", "정보 없음")
-        lines.append(f"- {name} ({category}, 평점: {rating})")
-
-    return "\n".join(lines)
+# def format_places_from_state(state: dict) -> str:
+#     """
+#     LangGraph state의 장소 목록을 사용자용 문자열로 변환한다.
+#
+#     Args:
+#         state (dict): LangGraph 상태값
+#
+#     Returns:
+#         str: 장소 추천 문자열
+#     """
+#     places = state.get("selected_places") or state.get("mapped_places") or []
+#
+#     if not places:
+#         return "추천할 장소가 아직 없어요."
+#
+#     lines = ["\n함께 볼 만한 장소도 골라봤어요."]
+#     for place in places[:5]:
+#         name = place.get("name", "이름 없는 장소")
+#         category = place.get("category", "장소")
+#         rating = place.get("rating", "정보 없음")
+#         lines.append(f"- {name} ({category}, 평점: {rating})")
+#
+#     return "\n".join(lines)
 
 
 def process_user_input(user_text: str) -> None:
@@ -292,6 +277,9 @@ def process_user_input(user_text: str) -> None:
         # 4. LangGraph 실행
         result = graph_app.invoke(graph_input)
         print("DEBUG: graph result =", result)
+        print("DEBUG: final_response =", result.get("final_response"))
+        print("DEBUG: route =", result.get("route"))
+        print("DEBUG: weather_data =", result.get("weather_data"))
 
         # 5. 최종 응답 추출
         raw_reply = result.get("final_response", "응답을 만들지 못했어요.")
@@ -309,3 +297,33 @@ def process_user_input(user_text: str) -> None:
         {"role": "assistant", "content": reply_text, "time": now_label()}
     )
     st.session_state.quick_buttons = reply_buttons
+
+
+if __name__ == "__main__":
+    # Streamlit 없이 테스트용 실행
+
+    # fake session_state 만들기
+    class DummySession:
+        def __init__(self):
+            self.messages = []
+            self.quick_buttons = []
+            self.trip_info = {
+                "destination": "미정",
+                "date": "미정",
+                "style": "미정"
+            }
+
+    # st.session_state 흉내내기
+    import types
+    st.session_state = DummySession()
+
+    # 테스트 입력
+    test_input = "다음주 목요일에 부산여행 갈거야"
+
+    # 실행
+    process_user_input(test_input)
+
+    # 결과 출력
+    print("\n=== 최종 결과 ===")
+    for msg in st.session_state.messages:
+        print(msg)
