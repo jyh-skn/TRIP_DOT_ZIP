@@ -282,11 +282,17 @@ def process_user_input(user_text: str) -> None:
 
     try:
         # 3. LangGraph 입력 state 구성
+        # 메시지뿐만 아니라 세션에 저장된 기존 상태값들을 함께 전달합니다.
         graph_input = {
             "messages": [
                 {"role": m["role"], "content": m["content"]}
                 for m in st.session_state.messages
-            ]
+            ],
+            "destination": st.session_state.get("destination"),
+            "styles": st.session_state.get("styles", []),
+            "constraints": st.session_state.get("constraints", []),
+            "travel_date": st.session_state.get("travel_date"),
+            "start_time": st.session_state.get("start_time"),
         }
 
         print("DEBUG: graph_app.invoke 직전")
@@ -294,6 +300,20 @@ def process_user_input(user_text: str) -> None:
 
         # 4. LangGraph 실행
         result = graph_app.invoke(graph_input)
+
+        # 4-1. 그래프 실행 결과로 업데이트된 상태를 Streamlit 세션에 다시 저장
+        # 이렇게 해야 다음 "내일 갈거야" 입력 때 세션에서 '부산'을 꺼내 넘겨줄 수 있습니다.
+        if result.get("destination"):
+            st.session_state["destination"] = result["destination"]
+        if result.get("styles"):
+            st.session_state["styles"] = result["styles"]
+        if result.get("constraints"):
+            st.session_state["constraints"] = result["constraints"]
+        if result.get("travel_date"):
+            st.session_state["travel_date"] = result["travel_date"]
+        if result.get("start_time"):
+            st.session_state["start_time"] = result["start_time"]
+
         print("DEBUG: graph result =", result)
         print("DEBUG: final_response =", result.get("final_response"))
         print("DEBUG: route =", result.get("route"))

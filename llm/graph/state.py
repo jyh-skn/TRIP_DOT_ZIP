@@ -20,6 +20,14 @@ class QualityCheck(TypedDict):
     target_node: str
 
 
+# 기존 값이 있다면 유지하고, 새로운 값이 들어올 때만 업데이트하는 함수
+def keep_and_update(existing: str | None, new: str | None) -> str | None:
+    # 새로운 값이 있으면 그것을 쓰고, 없으면 기존 값을 유지합니다.
+    if new is not None:
+        return new
+    return existing
+
+
 class TravelAgentState(TypedDict, total=False):
     # 기본 대화 / 라우팅
     messages: Annotated[list, add_messages]
@@ -28,7 +36,7 @@ class TravelAgentState(TypedDict, total=False):
     route: str
 
     # 여행 조건
-    destination: str
+    destination: Annotated[str | None, keep_and_update]
     styles: List[str]
     constraints: List[str]
     travel_date: str
