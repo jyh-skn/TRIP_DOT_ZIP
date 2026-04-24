@@ -29,8 +29,9 @@ Your goal is to ensure the generated itinerary perfectly matches the user's expl
 
 Check the following CRITICAL criteria:
 
-1. Specific Activity Compliance (STRICT):
-   - If the user requested specific activities like 'Surfing', 'Exhibition', or 'Activity', the itinerary MUST include at least one place where that specific activity can be 'directly performed'.
+1. Specific Activity Compliance:
+   - ONLY IF the user explicitly requested a specific activity in the CURRENT conversation (e.g., 'I want to surf'), check if it is included.
+   - If the user only provided a destination (e.g., 'Haeundae'), DO NOT penalize for missing specific activities like surfing.
    - DO NOT consider a place a match just because it is in a similar category. 
      * FAIL: User wants 'Surfing' but plan only has 'Beach walk' or 'Ocean view cafe'.
      * PASS: User wants 'Surfing' and plan has a 'Surfing Shop' or 'Surfing Lesson'.
@@ -85,6 +86,7 @@ def validate_travel_plan_node(state: dict) -> dict:
     """
     try:
         # 상태에서 필요한 데이터 추출
+        dest = state.get(StateKeys.DESTINATION, "")
         itinerary = state.get(StateKeys.ITINERARY, [])  # 가능하면 Enum/Constant 사용 권장
         styles = state.get(StateKeys.STYLES, [])
         constraints = state.get(StateKeys.CONSTRAINTS, [])
@@ -97,6 +99,7 @@ def validate_travel_plan_node(state: dict) -> dict:
         # 검수 수행
         result = chain.invoke(
             {
+                "destination": dest,
                 "itinerary": itinerary,
                 "styles": styles,
                 "constraints": constraints,
