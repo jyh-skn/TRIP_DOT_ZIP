@@ -715,8 +715,34 @@ def select_places_node(state: TravelAgentState) -> dict:
     else:
         valid_mapped = mapped_places
 
+    # --- 이름 기반 중복 제거 로직 추가 ---
+    unique_selected = []
+    seen_names = set()
+    restaurant_count = 0
+
+    for place in valid_mapped:
+        name = place.get("name")
+        category = place.get("category", "").lower()
+
+        # 1. 이름 중복 체크
+        if name in seen_names:
+            continue
+
+        # 2. 식당 중복 체크 (식당/맛집 카테고리는 1개만 허용)
+        is_restaurant = any(kw in category for kw in ["restaurant", "food", "맛집", "식당"])
+        if is_restaurant and restaurant_count >= 1:
+            continue  # 이미 식당이 하나 있으면 건너뜀
+
+        unique_selected.append(place)
+        seen_names.add(name)
+        if is_restaurant:
+            restaurant_count += 1
+
+        if len(unique_selected) >= 3:
+            break
+
     # 최종 후보 3개 선택 및 일정 리셋 (scheduler가 새 일정을 짜도록 유도)
-    selected = valid_mapped[:3]
+    selected = unique_selected
 
     print(f"[DEBUG] New places selected for {current_dest}. Resetting itinerary for scheduler.")
     return {
