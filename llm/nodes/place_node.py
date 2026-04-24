@@ -147,7 +147,10 @@ def place_node(state: TravelAgentState) -> dict:
 
     # api_result가 실패
     else:
-        pass
+        return {
+            StateKeys.ERROR: "장소 검색에 필요한 destination 또는 search_task가 비어 있습니다.",
+            StateKeys.STATE_TYPE_CD: "ERROR"
+        }
 
     
 

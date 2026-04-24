@@ -7,7 +7,7 @@ from config import Settings
 from utils.db_util import OpenAIEmbedder
 
 
-def get_integrated_search_results(user_query: str, k: int = 5):
+def get_integrated_search_results(user_query: str, k: int = 10):
     """
     Run metadata-aware retrieval with SelfQueryRetriever and return
     vector-search results in a UI-friendly format.

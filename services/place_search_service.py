@@ -12,7 +12,7 @@ from langchain.tools import tool
 from typing import List
 import os
 import requests
-from sympy import re
+import re
 from utils.custom_exception import PlaceNotFoundError
 from config import Settings
 import json
@@ -111,7 +111,7 @@ class PlaceReviewChunkInfo:
         # raw_text는 용량초과 시 제외
         meta.pop("raw_text")
 
-        return {id: cid, "document": text, "metadata": meta}
+        return {"id": cid, "document": text, "metadata": meta}
 
 
 @st.cache_data(ttl=3600)

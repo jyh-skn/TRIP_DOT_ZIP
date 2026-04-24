@@ -1,182 +1,408 @@
+# 🌍 TRIP_DOT_ZIP
 
-# 🌍 TRIP\_DOT\_ZIP
+> **LLM 기반 대화형 여행 일정 추천 시스템**
+> *대화를 통해 여행 조건을 수집하고, 장소를 추천하며, 최종 일정을 생성하는 AI Travel Agent*
 
-## 사용자 맞춤형 실시간 여행 의사결정 지원 시스템 (AI Travel Agent)
+---
 
 ## 📑 목차 (Table of Contents)
 
-1.  [📌 프로젝트 개요](https://www.google.com/search?q=%231-%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8-%EA%B0%9C%EC%9A%94)
-2.  [🖐🏻 팀 소개](https://www.google.com/search?q=%232-%ED%8C%80-%EC%86%8C%EA%B0%9C)
-3.  [🛠 기술 스택](https://www.google.com/search?q=%233-%EA%B8%B0%EC%88%A0-%EC%8A%A4%ED%83%9D)
-4.  [🧠 시스템 아키텍처](https://www.google.com/search?q=%234-%EC%8B%9C%EC%8A%A4%ED%85%9C-%EC%95%84%ED%82%A4%ED%85%8D%EC%B2%98)
-5.  [📈 주요 기능 및 화면](https://www.google.com/search?q=%235-%EC%A3%BC%EC%9A%94-%EA%B8%B0%EB%8A%A5-%EB%B0%8F-%ED%99%94%EB%A9%B4)
-6.  [🎬 서비스 시나리오](https://www.google.com/search?q=%236-%EC%84%9C%EB%B9%84%EC%8A%A4-%EC%8B%9C%EB%82%98%EB%A6%AC%EC%98%A4)
-7.  [📁 프로젝트 구조](https://www.google.com/search?q=%237-%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8-%EA%B5%AC%EC%A1%B0)
+1. [📌 프로젝트 개요](#1-프로젝트-개요)
+2. [🖐🏻 팀 소개](#2-팀-소개)
+3. [🛠 기술 스택](#3-기술-스택)
+4. [🧠 시스템 아키텍처](#4-시스템-아키텍처)
+5. [🔁 데이터 흐름 (Trip Plan Flow)](#5-데이터-흐름-trip-plan-flow)
+6. [🔀 기타 Flow](#6-기타-flow)
+7. [🚀 주요 기능](#7-주요-기능)
+8. [🤖 Agentic RAG 구조](#8-agentic-rag-구조)
+9. [🧩 State 설계](#9-state-설계)
+10. [⚙️ 설계 선택 이유](#10-설계-선택-이유)
+11. [📁 프로젝트 구조](#11-프로젝트-구조)
+12. [🎬 서비스 시나리오](#12-서비스-시나리오)
+13. [💬 동료 회고](#13-동료-회고)
 
------
+---
 
-## 1\. 📌 프로젝트 개요
+## 1. 📌 프로젝트 개요
 
 ### 📋 서비스 배경
 
-  - **여행 계획의 피로도 해소**: 정보의 홍수 속에서 최적의 동선을 짜는 스트레스를 줄이고, 개인의 취향을 완벽히 반영한 일정을 제공하고자 합니다.
-  - **정적 정보의 한계 극복**: 기존 챗봇은 미리 학습된 데이터나 고정된 리스트만 보여줍니다. 본 서비스는 \*\*실시간 외부 데이터(날씨, 영업 정보 등)\*\*를 반영하여 '지금 이 순간'에 가장 적합한 대안을 제시하는 **에이전트**형 서비스를 지향합니다.
+* 여행 계획은 정보 탐색, 장소 선정, 동선 구성까지 많은 피로도를 요구
+* 기존 추천 시스템은 정적인 리스트 제공에 그침
+
+👉 본 프로젝트는
+**LLM 기반 Agent 시스템을 활용하여 “대화형 여행 계획 자동화”**를 목표로 한다
+
+---
 
 ### 🎯 핵심 목표
 
-  - **LLM Function Calling 최적화**: 사용자의 의도를 분석해 날씨, 장소를 스스로 호출하는 지능형 로직 구현
-  - **상황 적응형(Context-Aware) 추천**: 우천 시 실내 코스 자동 전환, 사용자 선호도 반영 등 유연한 의사결정 지원
+* LangGraph 기반 상태 제어형 Agent 구현
+* LLM Function Calling 기반 Tool 자동 호출
+* 사용자와의 대화를 통한 여행 조건 수집
+* 상황(Context)에 맞는 동적 추천
+* 최종 일정 자동 생성
+
+---
 
 ### 💡 기대 효과
 
-  - **의사결정 효율화**: 검색부터 동선 최적화까지 한 번에 해결하여 여행 준비 시간 단축
-  - **여행 경험 최적화**: 실시간 변수(날씨 등)를 반영한 알맞은 장소를 추천하여 여행 만족도 극대화
+* 여행 준비 시간 단축
+* 개인 맞춤형 일정 제공
+* 실시간 상황(날씨 등) 반영
 
------
+---
 
-## 2\. 🖐🏻 팀 소개
+## 2. 🖐🏻 팀 소개
 
 ## Team Trip Dot ZIP
 
-여행의 모든 순간을 연결하는 다섯 마리의 똑똑한 땃쥐들입니다\!
+여행의 모든 순간을 연결하는 다섯 마리의 똑똑한 땃쥐들입니다!
 
-| <img src="https://github.com/user-attachments/assets/dbf2ad25-c76b-413b-921c-253a754a2299" width="140" height="140"/> | <img src="https://github.com/user-attachments/assets/01ad856b-7ad4-48c2-b332-97bc1e2e266b" width="140" height="140"/> | <img src="https://github.com/user-attachments/assets/a9b311d2-8a04-4541-9a76-a4f54f4808ef" width="140" height="140"/> | <img src="https://github.com/user-attachments/assets/2639af6c-a878-452b-884f-cb58213a58e9" width="140" height="140"/> | <img src="https://github.com/user-attachments/assets/e452c87a-2a24-4f09-b9d2-73b51fdf7a0c" width="140" height="140"/>> |
-|:---------------------------------------------------------------------------------------------------------------------:| :---: |:---------------------------------------------------------------------------------------------------------------------:| :---: |:----------------------------------------------------------------------------------------------------------------------:|
-|                                                        **김이선**                                                        | **김지윤** |                                                        **박은지**                                                        | **위희찬** |                                                        **홍지윤**                                                         |
-|                                                🛠️                 팀원                                                 | ✈️ 조장 |                                                         🌰 팀원                                                         | 🥜 대장 |                                                         🗺️ 팀원                                                         |
-|                                            middleware 및 <br> streamlit 연동                                             | 프로젝트 총괄 <br> LLM 프롬프트 설계 |                                                 상세 업무 내용 <br> 업데이트 예정                                                 | 기술 아키텍처 설계 <br> 에이전트 로직 구현 |                                                 상세 업무 내용 <br> 업데이트 예정                                                  |
-|                                      [GitHub](https://github.com/kysuniv-cyber)                                       | [GitHub](https://github.com/JiyounKim-EllyKim) |                                         [GitHub](https://github.com/lo1f0306)                                         | [GitHub](https://github.com/dnlgmlcks) |                                          [GitHub](https://github.com/jyh-skn)                                          |
+| <img src="https://github.com/user-attachments/assets/dbf2ad25-c76b-413b-921c-253a754a2299" width="140" height="140"/> | <img src="https://github.com/user-attachments/assets/01ad856b-7ad4-48c2-b332-97bc1e2e266b" width="140" height="140"/> | <img src="https://github.com/user-attachments/assets/a9b311d2-8a04-4541-9a76-a4f54f4808ef" width="140" height="140"/> | <img src="https://github.com/user-attachments/assets/2639af6c-a878-452b-884f-cb58213a58e9" width="140" height="140"/> | <img src="https://github.com/user-attachments/assets/e452c87a-2a24-4f09-b9d2-73b51fdf7a0c" width="140" height="140"/> |
+| :-------------------------------------------------------------------------------------------------------------------: |:---------------------------------------------------------------------------------------------------------------------:| :-------------------------------------------------------------------------------------------------------------------: | :-------------------------------------------------------------------------------------------------------------------: |:---------------------------------------------------------------------------------------------------------------------:|
+|                                                        **김이선**                                                        |                                                        **김지윤**                                                        |                                                        **박은지**                                                        |                                                        **위희찬**                                                        |                                                        **홍지윤**                                                        |
+|                                                 🛠️                 팀원                                                |                                                         ✈️ 조장                                                         |                                                         🌰 팀원                                                         |                                                         🥜 대장                                                         |                                                        🗺️ 팀원                                                         |
+|                                             middleware 및 <br> streamlit 연동                                            |                                         프로젝트 총괄 <br> LangGraph 기반 LLM 아키텍처 설계                                         |                                                 상세 업무 내용 <br> 업데이트 예정                                                 |                                               기술 아키텍처 설계 <br> 에이전트 로직 구현                                              |                                               AI 설계<br>데이터 설계<br>상태 관리                                                |
+|                                       [GitHub](https://github.com/kysuniv-cyber)                                      |                                    [GitHub](https://github.com/JiyounKim-EllyKim)                                     |                                         [GitHub](https://github.com/lo1f0306)                                         |                                         [GitHub](https://github.com/dnlgmlcks)                                        |                                         [GitHub](https://github.com/jyh-skn)                                          |
 
------
+---
 
-## 3\. 🛠 기술 스택
+## 3. 🛠 기술 스택
 
-### **Core**
+### Core
 
-  - **LLM**: OpenAI GPT-4.1-mini (Function Calling 최적화 모델)
-  - **Framework**: LangGraph (Agent & ReAct 로직 구현)
+* **LLM**: GPT-4o-mini
+* **Framework**: LangGraph (State 기반 Flow 제어)
 
-### **Data & API**
+### Data & API
 
-  - **External API**: OpenWeatherMap(날씨), Google Places(장소, 경로)
-  - **Library**: Pandas (데이터 처리), Scikit-learn (장소 랭킹 알고리즘)
+* OpenWeather API
+* Google Places API
 
-### **Frontend & Visualization**
+### Retrieval
 
-  - **UI**: Streamlit (인터랙티브 웹 대시보드)
-  - **Map**: Folium (경로 마커 및 시각화)
+* Chroma Vector DB
+* SelfQueryRetriever
 
------
+### Frontend & Visualization
 
-## 4\. 🧠 시스템 아키텍처
+* Streamlit
+* Folium
 
-1.  **사용자 입력**: 지역, 날짜, 날씨 조건 등 자연어 입력
-2.  **LLM Planner**: 사용자의 의도를 분석하고 필요한 'Tool' 정의
-3.  **Execution (Function Calling)**:
-      - `get_weather()`: 실시간 기상 데이터 호출
-      - `search_locations()`: 조건(실내/실외/예산)에 맞는 POI 검색
-      - `get_real_travel_time()`: 이동시간 산출하여 동선 및 스케줄에 반영
-4.  **Final Response**: 통합된 데이터 기반의 리포트 및 지도 시각화 출력
+---
 
------
+## 4. 🧠 시스템 아키텍처
 
-## 5\. 📈 주요 기능 및 화면
+```mermaid
+flowchart TD
 
-### **1) 실시간 날씨 반응형 일정 생성**
+A[User Input] --> B[Middleware<br/>Preprocess / Summarize]
 
-  - 단순히 "추천해줘"가 아닌, 날씨 API 결과에 따라 `if Rain: indoor_mode=True` 로직을 수행하여 박물관, 실내 테마파크 위주의 동선 제공
+B --> C[Intent Router]
 
-### **2) 인터랙티브 경로 시각화**
+C --> D1[Trip Plan Flow]
+C --> D2[Weather Flow]
+C --> D3[Place Flow]
+C --> D4[Schedule Flow]
+C --> D5[Fallback Flow]
 
-  - 추천된 코스를 순서대로 지도 위에 표시하고, 장소별 상세 사유를 카드 형태로 제시
+D1 --> E1[LangGraph State Control]
+D2 --> E2[Weather Tool]
+D3 --> E3[Vector DB Retrieval]
+D4 --> E4[Schedule Tool]
 
-### **3) 사용자 선호도 반영**
-    
-  - 채팅 시작 전 페르소나 설정을 통해 사용자의 나이대, 동반인, 여행 취향 등을 반영하여 데이터 적재 및 맞춤 장소 추천
+E1 --> F[Final Response]
+E2 --> F
+E3 --> F
+E4 --> F
+D5 --> F
+```
 
------
+---
 
-## 6\. 🎬 서비스 시나리오
+## 5. 🔁 데이터 흐름 (Trip Plan Flow 기준)
 
-  - **상황**: "이번 주 토요일 강릉 당일치기, 예산 7만 원, 비 오면 실내 위주로 가고 싶어."
-  - **에이전트 대응**:
-    1.  사용자의 페르소나 확인
-    2.  토요일 강릉 날씨 확인 (비 예보 감지)
-    3.  강릉 내 평점 높은 실내 장소(아르떼뮤지엄 등) 검색
-    4.  최단 거리 동선으로 일정표 및 지도 출력
+- 본 데이터 흐름은 전체 시스템 중 가장 핵심적인 "Trip Plan Flow" 기준으로 설명합니다.
 
------
+```mermaid
+flowchart TD
 
-## 7\. 📁 데이터 플로우
+A[User Input] --> B[Extract Requirements]
+
+B --> C{정보 충분?}
+
+C -->|No| D[Ask User]
+D --> B
+
+C -->|Yes| E{날씨 필요?}
+
+E -->|Yes| F[Call Weather Tool]
+E -->|No| G[Skip]
+
+F --> H[Place API 호출]
+G --> H
+
+H --> I[Vector DB 적재]
+
+I --> J[유사도 검색]
+
+J --> K[후보 장소 리스트 반환]
+
+K --> L[사용자 선택]
+
+L --> M{3개 선택 완료?}
+
+M -->|No| J
+M -->|Yes| N[Schedule 생성]
+
+N --> O[Validation LLM]
+
+O --> P{검증 통과?}
+
+P -->|Yes| Q[Final Response]
+P -->|No| J
+```
+
+---
+
+## 6. 🔀 기타 Flow
+
+Trip Plan Flow 외에도 사용자 요청에 따라 아래와 같은 Flow가 동작합니다.
+
+- **Weather Flow**  
+  → 특정 지역 및 날짜의 날씨 정보를 조회하고, 여행 관점에서 해석하여 제공
+
+- **Place Flow**  
+  → 일정 생성 없이 장소 추천만 수행 (Vector DB 기반 유사도 검색 활용)
+
+- **Schedule Flow**  
+  → 사용자가 선택한 장소 리스트를 기반으로 동선 및 시간표 생성
+
+- **Fallback Flow**  
+  → 일반 대화 또는 지원하지 않는 요청에 대한 응답 처리
+
+---
+
+## 7. 🚀 주요 기능
+
+### 1️⃣ 대화형 여행 계획 생성
+
+* 자연어 입력 기반 요구사항 추출
+* 부족한 정보 자동 질문
+* multi-turn 대화 구조
+
+---
+
+### 2️⃣ 날씨 기반 동적 추천
+
+* Weather API 활용
+* 날씨에 따라 추천 변경
+
+---
+
+### 3️⃣ Vector DB 기반 장소 추천 ⭐
+
+* 리뷰 기반 의미 유사도 검색
+* 단순 필터링이 아닌 semantic search
+
+---
+
+### 4️⃣ 사용자 선택 기반 장소 확정 ⭐
 
 ```text
-[User Input]
-    ↓
-[parse_user_input]
-    ↓
-[route_intent]
-    ├── trip_plan
-    │      ↓
-    │ [extract_trip_requirements]
-    │      ↓
-    │ [check_missing_info]
-    │      ├── missing 있음 → [ask_user_for_missing_info] → 사용자 응답 → [extract_trip_requirements]
-    │      └── missing 없음
-    │              ↓
-    │      [decide_weather_need]
-    │          ├── yes → [call_weather_tool]
-    │          └── no
-    │              ↓
-    │      [search_places]
-    │              ↓
-    │      [evaluate_place_candidates]
-    │          ├── 후보 부족 → [refine_place_search] → [search_places]
-    │          ├── 후보 충분 + 선택 필요 → [present_place_options] → [collect_user_place_selection]
-    │          └── 후보 충분 + 바로 진행
-    │              ↓
-    │      [generate_schedule]
-    │              ↓
-    │      [build_trip_response]
-    │              ↓
-    │             END
-    │
-    ├── weather_only
-    │      ↓
-    │ [extract_weather_query]
-    │      ↓
-    │ [call_weather_tool]
-    │      ↓
-    │ [build_weather_response]
-    │      ↓
-    │     END
-    │
-    ├── place_only
-    │      ↓
-    │ [extract_place_query]
-    │      ↓
-    │ [decide_weather_need_for_place]
-    │      ├── yes → [call_weather_tool]
-    │      └── no
-    │      ↓
-    │ [search_places]
-    │      ↓
-    │ [build_place_response]
-    │      ↓
-    │     END
-    │
-    ├── schedule_only
-    │      ↓
-    │ [extract_schedule_request]
-    │      ↓
-    │ [generate_schedule]
-    │      ↓
-    │ [build_schedule_response]
-    │      ↓
-    │     END
-    │
-    └── fallback_chat
-           ↓
-     [build_fallback_response]
-           ↓
-          END
+후보 10개 제공 → 사용자 선택 → 3개 확정
 ```
+
+---
+
+### 5️⃣ 일정 생성
+
+* 이동 시간 고려
+* 동선 최적화
+
+---
+
+### 6️⃣ Validation LLM
+
+* 일정 품질 검증
+* 이동 시간 / 흐름 체크
+
+---
+
+## 8. 🤖 Agentic RAG 구조
+
+```mermaid
+flowchart TD
+
+A[User Query] --> B[Place API 호출]
+
+B --> C[다양한 카테고리 후보 수집]
+
+C --> D[Vector DB 적재]
+
+D --> E[유사도 검색]
+
+E --> F[후보 Top-K 반환]
+
+F --> G[사용자 선택]
+
+G --> H[최종 장소 확정]
+
+H --> I[Schedule 생성]
+
+I --> J[Validation LLM]
+
+J --> K[결과 반환]
+```
+
+---
+
+## 9. 🧩 State 설계
+
+```text
+TravelPlannerState
+
+- user_input
+- intent
+- destination
+- styles
+- constraints
+
+- place_candidates
+- selected_places
+
+- weather_result
+- schedule_result
+```
+
+---
+
+## 10. ⚙️ 설계 선택 이유
+
+### LangGraph
+
+* 복잡한 분기 처리
+* multi-turn 대화
+
+### Vector DB
+
+* 리뷰 기반 의미 검색
+
+### 사용자 선택 방식
+
+* 취향 반영 극대화
+
+### Validation LLM
+
+* 일정 품질 보장
+
+---
+
+## 11. 📁 프로젝트 구조
+
+```text
+src/
+ ├── graph/
+ ├── nodes/
+ ├── retrieval/
+ ├── tools/
+ └── frontend/
+```
+
+---
+
+## 12. 🎬 서비스 시나리오
+
+**입력**
+
+> “부산 당일치기, 실내 위주로 가고 싶어”
+
+**출력**
+
+* 장소 추천
+* 사용자 선택
+* 일정 생성
+* 검증 완료 결과
+
+---
+
+## 🧠 한 줄 요약
+
+> **LangGraph 기반 LLM Agent가 대화를 통해 여행 조건을 수집하고,
+> Vector DB 기반 유사도 검색 + 사용자 선택을 통해 장소를 확정한 뒤,
+> 일정을 생성하고 검증까지 수행하는 시스템**
+
+
+---
+
+## 13. 💬 동료 회고
+
+<div>
+
+<!-- 김지윤 -->
+<table style="width:100%; border-collapse: collapse; border:1px solid #ddd;">
+<thead><tr style="background-color:#f2f2f2;"><th style="border:1px solid #ddd; padding:8px;">대상자</th><th style="border:1px solid #ddd; padding:8px;">작성자</th><th style="border:1px solid #ddd; padding:8px;">회고 내용</th></tr></thead>
+<tbody>
+<tr><td rowspan="4" style="text-align:center; border:1px solid #ddd;"><b>김지윤</b></td><td style="text-align:center; border:1px solid #ddd;">김이선</td><td style="border:1px solid #ddd;"></td></tr>
+<tr><td style="text-align:center; border:1px solid #ddd;">박은지</td><td style="border:1px solid #ddd;"></td></tr>
+<tr><td style="text-align:center; border:1px solid #ddd;">위희찬</td><td style="border:1px solid #ddd;"></td></tr>
+<tr><td style="text-align:center; border:1px solid #ddd;">홍지윤</td><td style="border:1px solid #ddd;"></td></tr>
+</tbody>
+</table>
+
+<br>
+
+<!-- 김이선 -->
+<table style="width:100%; border-collapse: collapse; border:1px solid #ddd;">
+<thead><tr style="background-color:#f2f2f2;"><th style="border:1px solid #ddd; padding:8px;">대상자</th><th style="border:1px solid #ddd; padding:8px;">작성자</th><th style="border:1px solid #ddd; padding:8px;">회고 내용</th></tr></thead>
+<tbody>
+<tr><td rowspan="4" style="text-align:center; border:1px solid #ddd;"><b>김이선</b></td><td style="text-align:center; border:1px solid #ddd;">김지윤</td><td style="border:1px solid #ddd;"></td></tr>
+<tr><td style="text-align:center; border:1px solid #ddd;">박은지</td><td style="border:1px solid #ddd;"></td></tr>
+<tr><td style="text-align:center; border:1px solid #ddd;">위희찬</td><td style="border:1px solid #ddd;"></td></tr>
+<tr><td style="text-align:center; border:1px solid #ddd;">홍지윤</td><td style="border:1px solid #ddd;"></td></tr>
+</tbody>
+</table>
+
+<br>
+
+<!-- 박은지 -->
+<table style="width:100%; border-collapse: collapse; border:1px solid #ddd;">
+<thead><tr style="background-color:#f2f2f2;"><th style="border:1px solid #ddd; padding:8px;">대상자</th><th style="border:1px solid #ddd; padding:8px;">작성자</th><th style="border:1px solid #ddd; padding:8px;">회고 내용</th></tr></thead>
+<tbody>
+<tr><td rowspan="4" style="text-align:center; border:1px solid #ddd;"><b>박은지</b></td><td style="text-align:center; border:1px solid #ddd;">김지윤</td><td style="border:1px solid #ddd;"></td></tr>
+<tr><td style="text-align:center; border:1px solid #ddd;">김이선</td><td style="border:1px solid #ddd;"></td></tr>
+<tr><td style="text-align:center; border:1px solid #ddd;">위희찬</td><td style="border:1px solid #ddd;"></td></tr>
+<tr><td style="text-align:center; border:1px solid #ddd;">홍지윤</td><td style="border:1px solid #ddd;"></td></tr>
+</tbody>
+</table>
+
+<br>
+
+<!-- 위희찬 -->
+<table style="width:100%; border-collapse: collapse; border:1px solid #ddd;">
+<thead><tr style="background-color:#f2f2f2;"><th style="border:1px solid #ddd; padding:8px;">대상자</th><th style="border:1px solid #ddd; padding:8px;">작성자</th><th style="border:1px solid #ddd; padding:8px;">회고 내용</th></tr></thead>
+<tbody>
+<tr><td rowspan="4" style="text-align:center; border:1px solid #ddd;"><b>위희찬</b></td><td style="text-align:center; border:1px solid #ddd;">김지윤</td><td style="border:1px solid #ddd;"></td></tr>
+<tr><td style="text-align:center; border:1px solid #ddd;">김이선</td><td style="border:1px solid #ddd;"></td></tr>
+<tr><td style="text-align:center; border:1px solid #ddd;">박은지</td><td style="border:1px solid #ddd;"></td></tr>
+<tr><td style="text-align:center; border:1px solid #ddd;">홍지윤</td><td style="border:1px solid #ddd;"></td></tr>
+</tbody>
+</table>
+
+<br>
+
+<!-- 홍지윤 -->
+<table style="width:100%; border-collapse: collapse; border:1px solid #ddd;">
+<thead><tr style="background-color:#f2f2f2;"><th style="border:1px solid #ddd; padding:8px;">대상자</th><th style="border:1px solid #ddd; padding:8px;">작성자</th><th style="border:1px solid #ddd; padding:8px;">회고 내용</th></tr></thead>
+<tbody>
+<tr><td rowspan="4" style="text-align:center; border:1px solid #ddd;"><b>홍지윤</b></td><td style="text-align:center; border:1px solid #ddd;">김지윤</td><td style="border:1px solid #ddd;"></td></tr>
+<tr><td style="text-align:center; border:1px solid #ddd;">김이선</td><td style="border:1px solid #ddd;"></td></tr>
+<tr><td style="text-align:center; border:1px solid #ddd;">박은지</td><td style="border:1px solid #ddd;"></td></tr>
+<tr><td style="text-align:center; border:1px solid #ddd;">위희찬</td><td style="border:1px solid #ddd;"></td></tr>
+</tbody>
+</table>
+
+</div>
+
+---
