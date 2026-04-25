@@ -192,7 +192,7 @@ class intent_node():
         return {
             StateKeys.INTENT: llm_result.intent,
             StateKeys.CONFIDENCE: llm_result.confidence,
-            StateKeys.ROUTE: f'{route_map.get(llm_result.intent, "chat")}_node',
+            StateKeys.ROUTE: route_map.get(llm_result.intent, "chat"),
             # Extract의 정보
             StateKeys.DESTINATION: llm_result.destination,
             StateKeys.CONSTRAINTS: llm_result.constraints,

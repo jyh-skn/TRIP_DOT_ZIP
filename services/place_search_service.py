@@ -29,7 +29,7 @@ places_api_key = Settings.places_api_key
 openai_api_key = Settings.openai_api_key
 
 # Test를 위한 값. => True 시 파일로 다운로드 가능.
-SAVE_FILE_TEST_MODE = True
+SAVE_FILE_TEST_MODE = False
 
 # 카테고리 단순화를 위한 mapping값. => TODO: constants.py
 

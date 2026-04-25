@@ -28,7 +28,7 @@ import hashlib
 import chromadb
 
 # 전처리 완료된 청크를 저장 여부.
-SAVE_FILE_TEST_MODE = True
+SAVE_FILE_TEST_MODE = False
 
 KEYWORD_DICT = {
     "청결": ["깔끔", "청결", "위생", "냄새", "깨끗"],

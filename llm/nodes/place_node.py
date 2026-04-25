@@ -19,7 +19,7 @@ PLACES_API_KEY = Settings.places_api_key
 # Google API 호출 데이터 최댓값
 API_LIMIT = 20 # API에서 최대 값이 20.
 # 파일 저장 모드
-SAVE_FILE_TEST_MODE = True
+SAVE_FILE_TEST_MODE = False
 
 # API 호출 함수
 def get_places_by_api(destination:str, constraints: List[str], search_task:List[dict]):
