@@ -94,12 +94,10 @@ class intent_node():
                 - 이는 기존 일정을 유지하면서 특정 장소를 변경/추가하려는 의도입니다.
                 - 반드시 'modify_request'로 분류하고 route를 'travel'로 설정하십시오.
                 - 'general_chat'은 인사나 감사 인사처럼 여행 계획과 무관한 경우에만 사용하십시오.
-                - Scope: You are only authorized to plan activities for a single day.
                 - Prohibited Topics: Never mention, recommend, or ask about:
                   1. Accommodations (Hotels, Airbnb, etc.)
-                  2. Long-term stay duration (e.g., "How many days are you staying?")
-                  3. Long-distance transportation (Flights, Intercity trains, etc.)
-                - If a user asks about prohibited topics, politely state: "저는 당일치기 일정 전문이라 숙소나 교통 정보는 잘 몰라요! 대신 해운대에서의 멋진 하루를 계획해 드릴게요."
+                  2. Long-distance transportation (Flights, Intercity trains, etc.)
+                - If a user asks about prohibited topics, politely state: "숙소나 교통 정보는 잘 몰라요! 대신 해운대에서의 멋진 여행 계획을 만들어 드릴게요."
 
 
                 [1. 의도 분류 가이드]
