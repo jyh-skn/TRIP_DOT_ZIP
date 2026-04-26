@@ -614,7 +614,7 @@ TRIP_DOT_ZIP/
 <table style="width:100%; border-collapse: collapse; border:1px solid #ddd;">
 <thead><tr style="background-color:#f2f2f2;"><th style="border:1px solid #ddd; padding:8px;">대상자</th><th style="border:1px solid #ddd; padding:8px;">작성자</th><th style="border:1px solid #ddd; padding:8px;">회고 내용</th></tr></thead>
 <tbody>
-<tr><td rowspan="4" style="text-align:center; border:1px solid #ddd;"><b>김지윤</b></td><td style="text-align:center; border:1px solid #ddd;">김이선</td><td style="border:1px solid #ddd;"></td></tr>
+<tr><td rowspan="4" style="text-align:center; border:1px solid #ddd;"><b>김지윤</b></td><td style="text-align:center; border:1px solid #ddd;">김이선</td><td style="border:1px solid #ddd;">코드를 짜다보면 가끔 자기가 맡은 파트에만 집중하여 전체적인 흐름을 놓칠때가 있었는데 그럴때마다 전체적인 흐름을 다시 설명해주고 어떤 부분을 보강해야 할지 알려 주심. 회의때마다 프로젝트의 동작 방식에서 어떤 기능을 어떻게 쓰면 좋을 것 같다는 아이디어를 내어 수업시간에 배운 다양한 개념을 실제 프로젝트에 적용 할 수 있었음.</td></tr>
 <tr><td style="text-align:center; border:1px solid #ddd;">박은지</td><td style="border:1px solid #ddd;"></td></tr>
 <tr><td style="text-align:center; border:1px solid #ddd;">위희찬</td><td style="border:1px solid #ddd;"></td></tr>
 <tr><td style="text-align:center; border:1px solid #ddd;">홍지윤</td><td style="border:1px solid #ddd;"></td></tr>
@@ -641,7 +641,7 @@ TRIP_DOT_ZIP/
 <thead><tr style="background-color:#f2f2f2;"><th style="border:1px solid #ddd; padding:8px;">대상자</th><th style="border:1px solid #ddd; padding:8px;">작성자</th><th style="border:1px solid #ddd; padding:8px;">회고 내용</th></tr></thead>
 <tbody>
 <tr><td rowspan="4" style="text-align:center; border:1px solid #ddd;"><b>박은지</b></td><td style="text-align:center; border:1px solid #ddd;">김지윤</td><td style="border:1px solid #ddd;"></td></tr>
-<tr><td style="text-align:center; border:1px solid #ddd;">김이선</td><td style="border:1px solid #ddd;"></td></tr>
+<tr><td style="text-align:center; border:1px solid #ddd;">김이선</td><td style="border:1px solid #ddd;">회의때마다 다양한 아이디어를 던지시고 현재 어플애서 생기는 다양한 버그를 잡아주셨음. 스케쥴 기능을 주로 잡으시며 google place tool을 다양한 방법으로 사용하심. 그로써 한층 더 발전한 스케쥴 로직을 완성 할 수 있었음.</td></tr>
 <tr><td style="text-align:center; border:1px solid #ddd;">위희찬</td><td style="border:1px solid #ddd;"></td></tr>
 <tr><td style="text-align:center; border:1px solid #ddd;">홍지윤</td><td style="border:1px solid #ddd;"></td></tr>
 </tbody>
@@ -654,7 +654,7 @@ TRIP_DOT_ZIP/
 <thead><tr style="background-color:#f2f2f2;"><th style="border:1px solid #ddd; padding:8px;">대상자</th><th style="border:1px solid #ddd; padding:8px;">작성자</th><th style="border:1px solid #ddd; padding:8px;">회고 내용</th></tr></thead>
 <tbody>
 <tr><td rowspan="4" style="text-align:center; border:1px solid #ddd;"><b>위희찬</b></td><td style="text-align:center; border:1px solid #ddd;">김지윤</td><td style="border:1px solid #ddd;"></td></tr>
-<tr><td style="text-align:center; border:1px solid #ddd;">김이선</td><td style="border:1px solid #ddd;"></td></tr>
+<tr><td style="text-align:center; border:1px solid #ddd;">김이선</td><td style="border:1px solid #ddd;">스트림릿을 구현해 주셨음. 다른 팀원이 건낸 디자인을 그대로 구현하며 팀원들의 스트림릿 걱정을 없애줌. 마스코트인 땃쥐캐릭터에게 생명력을 불어넣어주며 사용자의 지루함과 라포형성에 큰 역할을 함. 또한 스트림릿의 백엔드 부분을 구현해주며 사용자의 기능사용과 여러 페르소나의 DB를 쌓을 수 있게 해줌.</td></tr>
 <tr><td style="text-align:center; border:1px solid #ddd;">박은지</td><td style="border:1px solid #ddd;"></td></tr>
 <tr><td style="text-align:center; border:1px solid #ddd;">홍지윤</td><td style="border:1px solid #ddd;"></td></tr>
 </tbody>
@@ -667,7 +667,7 @@ TRIP_DOT_ZIP/
 <thead><tr style="background-color:#f2f2f2;"><th style="border:1px solid #ddd; padding:8px;">대상자</th><th style="border:1px solid #ddd; padding:8px;">작성자</th><th style="border:1px solid #ddd; padding:8px;">회고 내용</th></tr></thead>
 <tbody>
 <tr><td rowspan="4" style="text-align:center; border:1px solid #ddd;"><b>홍지윤</b></td><td style="text-align:center; border:1px solid #ddd;">김지윤</td><td style="border:1px solid #ddd;"></td></tr>
-<tr><td style="text-align:center; border:1px solid #ddd;">김이선</td><td style="border:1px solid #ddd;"></td></tr>
+<tr><td style="text-align:center; border:1px solid #ddd;">김이선</td><td style="border:1px solid #ddd;">맡으신 파트 뿐만 아니라 여러 방면에 생기는 문제를 해결해 주시며 프로젝트의 전반적인 부분을 맡아주셨습니다. 프로젝트를 진행하다가 생기는 오류 중 자기 파트의 오류가 아니고 전체적으로 봐서 분해야 하는 부분에서는 항상 지윤님께서 langsmith를 파악하여 알려주셨습니다. 또한 회의 중 다른 </td></tr>
 <tr><td style="text-align:center; border:1px solid #ddd;">박은지</td><td style="border:1px solid #ddd;"></td></tr>
 <tr><td style="text-align:center; border:1px solid #ddd;">위희찬</td><td style="border:1px solid #ddd;"></td></tr>
 </tbody>
